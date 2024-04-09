@@ -12,6 +12,8 @@
     var bola;
     var p1;
     var p2;
+    var cursors;
+    var keys;
 
     class GOTY extends Phaser.Scene
     {
@@ -29,27 +31,49 @@
 
             //p1 cima p2 baixo
             var firstPlayer = Phaser.Math.Between(1,2);
-            var firtstYBallSpeed = firstPlayer==1 ? -100 : 100;
+            var firtstYBallSpeed = firstPlayer==1 ? -200 : 200;
 
             bola.setVelocityY(firtstYBallSpeed);
-            bola.setVelocityX(/* Phaser.Math.Between(-130,130) */0);
-
-            p1 = this.physics.add.staticBody();
-            
-            
+            bola.setVelocityX(Phaser.Math.Between(-130,130));
+   
 
             p1 = this.physics.add.image(400, 25, 'ret');
             p2 = this.physics.add.image(400, 575, 'ret');
             p1.setCollideWorldBounds(true);
             p2.setCollideWorldBounds(true);
 
-            // this.physics.add.collider(bola, p1);
+            p2.setImmovable(true);  p1.setImmovable(true);
+
+            this.physics.add.collider(bola, p1);
             this.physics.add.collider(bola, p2);
+
+            cursors = this.input.keyboard.createCursorKeys();
+            keys = this.input.keyboard.addKeys('W,A,S,D');
         }
 
         update ()
         {
-            
+            if (cursors.right.isDown)
+            {
+                p1.setVelocityX(250);
+            }
+            else if (cursors.left.isDown)
+            {
+                p1.setVelocityX(-250);
+            }
+            else
+            {
+                p1.setVelocityX(0);
+            }
+            if(keys.A.isDown){
+                p2.setVelocityX(-250);
+            }
+            else if(keys.D.isDown){
+                p2.setVelocityX(250);
+            }
+            else{
+                p2.setVelocityX(0);
+            }
         }
     }
 
@@ -61,7 +85,7 @@
         physics: {
             default: 'arcade',
             arcade: {
-                
+                debugger : true
             }
         }
     };

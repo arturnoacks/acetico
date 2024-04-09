@@ -7,13 +7,12 @@
 
     <script>
 
-   
-
     var bola;
     var p1;
     var p2;
     var cursors;
     var keys;
+    var bounce = 1;
 
     class GOTY extends Phaser.Scene
     {
@@ -26,7 +25,7 @@
         create ()
         {
             bola = this.physics.add.image(400, 300, 'bola');
-            bola.setBounce(1, 1);
+            bola.setBounce(bounce, bounce);
             bola.setCollideWorldBounds(true);
 
             //p1 cima p2 baixo
@@ -74,6 +73,9 @@
             else{
                 p2.setVelocityX(0);
             }
+
+            if(bounce < 1.1) bounce += 0.00000001;
+            bola.setBounce(bounce, bounce);
         }
     }
 

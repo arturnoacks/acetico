@@ -7,6 +7,7 @@
 
     <script>
 
+    var objetos;
     var bola;
     var p1;
     var p2;
@@ -24,6 +25,11 @@
 
         create ()
         {
+            objetos = this.physics.add.staticGroup();
+
+            objetos.create(200, 300, 'ret').setScale(1.2).refreshBody();
+            objetos.create(600, 300, 'ret').setScale(1.2).refreshBody();
+
             bola = this.physics.add.image(400, 300, 'bola');
             bola.setBounce(bounce, bounce);
             bola.setCollideWorldBounds(true);
@@ -45,6 +51,7 @@
 
             this.physics.add.collider(bola, p1);
             this.physics.add.collider(bola, p2);
+            this.physics.add.collider(bola, objetos);
 
             cursors = this.input.keyboard.createCursorKeys();
             keys = this.input.keyboard.addKeys('W,A,S,D');
@@ -54,27 +61,27 @@
         {
             if (cursors.right.isDown)
             {
-                p1.setVelocityX(250);
+                p1.setVelocityX(300);
             }
             else if (cursors.left.isDown)
             {
-                p1.setVelocityX(-250);
+                p1.setVelocityX(-300);
             }
             else
             {
                 p1.setVelocityX(0);
             }
             if(keys.A.isDown){
-                p2.setVelocityX(-250);
+                p2.setVelocityX(-300);
             }
             else if(keys.D.isDown){
-                p2.setVelocityX(250);
+                p2.setVelocityX(300);
             }
             else{
                 p2.setVelocityX(0);
             }
 
-            if(bounce < 1.1) bounce += 0.00000001;
+            if(bounce < 1.1) bounce += 0.000001;
             bola.setBounce(bounce, bounce);
         }
     }
@@ -87,7 +94,7 @@
         physics: {
             default: 'arcade',
             arcade: {
-                debugger : true
+                //debug : true
             }
         }
     };

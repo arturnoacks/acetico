@@ -7,6 +7,8 @@
 
     <script>
 
+    var velXBola;
+    var velXBarra = 300;
     var objetos;
     var bola;
     var p1;
@@ -38,9 +40,10 @@
             var firstPlayer = Phaser.Math.Between(1,2);
             var firtstYBallSpeed = firstPlayer==1 ? -200 : 200;
 
+            velXBola = Phaser.Math.Between(-130,130);
+            
             bola.setVelocityY(firtstYBallSpeed);
-            bola.setVelocityX(Phaser.Math.Between(-130,130));
-   
+            bola.setVelocityX(velXBola);
 
             p1 = this.physics.add.image(400, 25, 'ret');
             p2 = this.physics.add.image(400, 575, 'ret');
@@ -48,43 +51,59 @@
             p2.setCollideWorldBounds(true);
 
             p2.setImmovable(true);  p1.setImmovable(true);
-
+            p2.onCollide = true;    p2.onCollide = true;
+            
             this.physics.add.collider(bola, p1);
             this.physics.add.collider(bola, p2);
             this.physics.add.collider(bola, objetos);
+            
+            // this.physics.world.on('collide', function (bola, p1) {
+            //     var vel = velXBarra + velXBola + Phaser.Math.Between(-50, 50);
+            //     console.log(vel);
+            //     bolaObj.setVelocityX(vel);
+            // });
+
+            //this.physics.world.on('collide', rebateBola(bola, p2, null, null));
 
             cursors = this.input.keyboard.createCursorKeys();
             keys = this.input.keyboard.addKeys('W,A,S,D');
+
         }
 
         update ()
         {
             if (cursors.right.isDown)
             {
-                p1.setVelocityX(300);
+                p1.setVelocityX(velXBarra);
             }
             else if (cursors.left.isDown)
             {
-                p1.setVelocityX(-300);
+                p1.setVelocityX(-velXBarra);
             }
             else
             {
                 p1.setVelocityX(0);
             }
             if(keys.A.isDown){
-                p2.setVelocityX(-300);
+                p2.setVelocityX(-velXBarra);
             }
             else if(keys.D.isDown){
-                p2.setVelocityX(300);
+                p2.setVelocityX(velXBarra);
             }
             else{
                 p2.setVelocityX(0);
             }
-
-            if(bounce < 1.1) bounce += 0.000001;
+            if(bounce < 1.1) bounce += 0.0000001;
             bola.setBounce(bounce, bounce);
+
         }
     }
+
+        function rebateBola (bolaObj, paredeObj, bolaBody, paredeBody){
+            var vel = velXBarra + velXBola + Phaser.Math.Between(-50, 50);
+            console.log(vel);
+            bolaObj.setVelocityX(vel);
+        }
 
     var config = {
         type: Phaser.AUTO,
@@ -94,7 +113,7 @@
         physics: {
             default: 'arcade',
             arcade: {
-                //debug : true
+                debug : true
             }
         }
     };

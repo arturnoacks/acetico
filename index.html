@@ -42,6 +42,7 @@
 
             velXBola = Phaser.Math.Between(-130,130);
             
+            bola.body.showVelocity = true;
             bola.setVelocityY(firtstYBallSpeed);
             bola.setVelocityX(velXBola);
 
@@ -51,10 +52,10 @@
             p2.setCollideWorldBounds(true);
 
             p2.setImmovable(true);  p1.setImmovable(true);
-            p2.onCollide = true;    p2.onCollide = true;
+            p2.onCollide = true;    p1.onCollide = true;
             
-            this.physics.add.collider(bola, p1);
-            this.physics.add.collider(bola, p2);
+            this.physics.add.collider(bola, p1, rebateBola, null, this);
+            this.physics.add.collider(bola, p2, rebateBola, null, this);
             this.physics.add.collider(bola, objetos);
             
             // this.physics.world.on('collide', function (bola, p1) {
@@ -98,12 +99,12 @@
 
         }
     }
-
-        function rebateBola (bolaObj, paredeObj, bolaBody, paredeBody){
-            var vel = velXBarra + velXBola + Phaser.Math.Between(-50, 50);
+        function rebateBola (){
+            var vel = velXBola + Phaser.Math.Between(-50, 50);
             console.log(vel);
-            bolaObj.setVelocityX(vel);
+            bola.setVelocityX(vel);
         }
+
 
     var config = {
         type: Phaser.AUTO,

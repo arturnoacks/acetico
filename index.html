@@ -9,13 +9,14 @@
 
     var velXBola;
     var velXBarra = 300;
-    var objetos;
+    var objetos, objeto1, objeto2, flag= 1;
     var bola;
     var p1;
     var p2;
     var cursors;
     var keys;
     var bounce = 1;
+    var gameOver = 0;
 
     class GOTY extends Phaser.Scene
     {
@@ -27,18 +28,22 @@
 
         create ()
         {
-            objetos = this.physics.add.staticGroup();
+            objetos = this.physics.add.group();
 
-            objetos.create(200, 300, 'ret').setScale(1.2).refreshBody();
-            objetos.create(600, 300, 'ret').setScale(1.2).refreshBody();
-
+            objeto1 = objetos.create(200, 350, 'ret').setScale(1.2).refreshBody();
+            objeto2 = objetos.create(600, 250, 'ret').setScale(1.2).refreshBody();
+            objeto1.setImmovable(true);
+            objeto2.setImmovable(true);
+            flag = Phaser.Math.Between(1,2);
+            flag = flag == 1 ? 1 : -1;
+            
             bola = this.physics.add.image(400, 300, 'bola');
             bola.setBounce(bounce, bounce);
             bola.setCollideWorldBounds(true);
 
             //p1 cima p2 baixo
             var firstPlayer = Phaser.Math.Between(1,2);
-            var firtstYBallSpeed = firstPlayer==1 ? -200 : 200;
+            var firtstYBallSpeed = firstPlayer == 1 ? -200 : 200;
 
             velXBola = Phaser.Math.Between(-130,130);
             
@@ -54,17 +59,9 @@
             p2.setImmovable(true);  p1.setImmovable(true);
             p2.onCollide = true;    p1.onCollide = true;
             
-            this.physics.add.collider(bola, p1, rebateBola, null, this);
-            this.physics.add.collider(bola, p2, rebateBola, null, this);
+            this.physics.add.collider(bola, p1);
+            this.physics.add.collider(bola, p2);
             this.physics.add.collider(bola, objetos);
-            
-            // this.physics.world.on('collide', function (bola, p1) {
-            //     var vel = velXBarra + velXBola + Phaser.Math.Between(-50, 50);
-            //     console.log(vel);
-            //     bolaObj.setVelocityX(vel);
-            // });
-
-            //this.physics.world.on('collide', rebateBola(bola, p2, null, null));
 
             cursors = this.input.keyboard.createCursorKeys();
             keys = this.input.keyboard.addKeys('W,A,S,D');
@@ -81,8 +78,7 @@
             {
                 p1.setVelocityX(-velXBarra);
             }
-            else
-            {
+            else {
                 p1.setVelocityX(0);
             }
             if(keys.A.isDown){
@@ -91,20 +87,43 @@
             else if(keys.D.isDown){
                 p2.setVelocityX(velXBarra);
             }
-            else{
+            else {
                 p2.setVelocityX(0);
             }
+
             if(bounce < 1.1) bounce += 0.0000001;
             bola.setBounce(bounce, bounce);
 
+            if(objeto1.x > this.physics.world.bounds.width/2){
+                flag = -1
+            }
+            else if(objeto2.x < this.physics.world.bounds.width/2){
+                flag = 1;
+            }          
+            Phaser.Actions.Call(objetos.getChildren(), function(go) {go.setVelocityX(100 * flag)})
+            
+            
+            if(bola.body.y < p1.body.y){
+                gameOver = 1;
+                console.log('p1 ganhou');
+                this.add.text(this.physics.world.bounds.width/2, this.physics.world.bounds.height/2, 'PLAYER 1 VENCEU').setOrigin(0.5);
+            }
+            else if(bola.body.y > p2.body.y){
+                gameOver = 1;
+                console.log('p2 ganhou');
+                this.add.text(this.physics.world.bounds.width/2, this.physics.world.bounds.height/2, 'PLAYER 2 VENCEU').setOrigin(0.5);
+            }
+
+            if(gameOver){
+                bola.setVelocityX(0);
+                bola.setVelocityY(0);
+                p1.setVelocityX(0);
+                p2.setVelocityX(0);
+                flag = 0;
+            }
+
         }
     }
-        function rebateBola (){
-            var vel = velXBola + Phaser.Math.Between(-50, 50);
-            console.log(vel);
-            bola.setVelocityX(vel);
-        }
-
 
     var config = {
         type: Phaser.AUTO,
